@@ -1,0 +1,13 @@
+<<<<<<< HEAD
+node_modules
+.next
+tsconfig.tsbuildinfo
+.claude
+=======
+# Added by code-review-graph
+.code-review-graph/
+>>>>>>> 4ab16c15 (feat: complete blog system — MDX articles, search, tags, SEO, RSS, tests)
+node_modules
+.next
+node_modules
+.next
