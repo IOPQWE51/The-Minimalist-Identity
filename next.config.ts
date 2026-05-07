@@ -1,12 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-<<<<<<< HEAD
-=======
-  typescript: {
-    ignoreBuildErrors: true,
-  },
->>>>>>> 4ab16c15 (feat: complete blog system — MDX articles, search, tags, SEO, RSS, tests)
+  pageExtensions: ['ts', 'tsx', 'md', 'mdx'],
   images: {
     formats: ["image/avif", "image/webp"],
     remotePatterns: [

@@ -1,47 +1,71 @@
-<!-- BEGIN:nextjs-agent-rules -->
-# This is NOT the Next.js you know
+# AGENTS.md
 
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
-<!-- END:nextjs-agent-rules -->
-<<<<<<< HEAD
-=======
+This file provides guidance to AI agents when working with the codebase.
 
-<!-- code-review-graph MCP tools -->
-## MCP Tools: code-review-graph
+## Project: Project Aura
 
-**IMPORTANT: This project has a knowledge graph. ALWAYS use the
-code-review-graph MCP tools BEFORE using Grep/Glob/Read to explore
-the codebase.** The graph is faster, cheaper (fewer tokens), and gives
-you structural context (callers, dependents, test coverage) that file
-scanning cannot.
+A minimalist digital garden and blog system.
 
-### When to use graph tools FIRST
+## Architecture
 
-- **Exploring code**: `semantic_search_nodes` or `query_graph` instead of Grep
-- **Understanding impact**: `get_impact_radius` instead of manually tracing imports
-- **Code review**: `detect_changes` + `get_review_context` instead of reading entire files
-- **Finding relationships**: `query_graph` with callers_of/callees_of/imports_of/tests_for
-- **Architecture questions**: `get_architecture_overview` + `list_communities`
+- **Frontend:** Next.js 16 + React 19 + Tailwind CSS 4
+- **Content:** Markdown files with YAML frontmatter
+- **Search:** Client-side fuzzy search
+- **SEO:** Dynamic sitemap, RSS feed, Open Graph images
 
-Fall back to Grep/Glob/Read **only** when the graph doesn't cover what you need.
+## Directory Structure
 
-### Key Tools
+```
+src/
+  app/
+    page.tsx              # Home page
+    layout.tsx            # Root layout with fonts, theme, smooth scroll
+    globals.css           # Global styles and design tokens
+    blog/
+      page.tsx            # Blog listing with tag filter
+      [slug]/page.tsx     # Article detail page
+      tag/[tag]/page.tsx  # Tag archive page
+    about/page.tsx        # About page
+    projects/page.tsx     # Projects page
+    sitemap.ts            # Dynamic sitemap
+    robots.ts             # Dynamic robots.txt
+    feed.xml/route.ts     # RSS feed
+    opengraph-image.tsx   # Site-level OG image
+  components/
+    Aurora.tsx            # Aurora background effect
+    BentoGrid.tsx         # Bento grid layout
+    CommandPalette.tsx    # ⌘K command palette with search
+    Footer.tsx            # Footer
+    GlassCard.tsx         # Glass morphism card
+    Navbar.tsx            # Navigation bar
+    SearchBox.tsx         # Search box component
+    TagCloud.tsx          # Tag cloud component
+    TableOfContents.tsx   # Article table of contents
+    ReadingProgress.tsx   # Reading progress bar
+    BackToTop.tsx         # Back to top button
+    MDXContent.tsx        # MDX content renderer
+    MDXComponents.tsx     # MDX component mappings
+  lib/
+    posts.ts              # Post data utilities
+    search.ts             # Search utilities
+    motion.ts             # Framer Motion animations
+    utils.ts              # Utility functions (cn)
+content/
+  posts/                  # Blog articles (Markdown with frontmatter)
+```
 
-| Tool | Use when |
-|------|----------|
-| `detect_changes` | Reviewing code changes — gives risk-scored analysis |
-| `get_review_context` | Need source snippets for review — token-efficient |
-| `get_impact_radius` | Understanding blast radius of a change |
-| `get_affected_flows` | Finding which execution paths are impacted |
-| `query_graph` | Tracing callers, callees, imports, tests, dependencies |
-| `semantic_search_nodes` | Finding functions/classes by name or keyword |
-| `get_architecture_overview` | Understanding high-level codebase structure |
-| `refactor_tool` | Planning renames, finding dead code |
+## Design Principles
 
-### Workflow
+1. **Minimalism** — Less is more. Every element must earn its place.
+2. **Glassmorphism** — Frosted glass effects with backdrop-blur.
+3. **Spring Physics** — Natural, spring-based animations.
+4. **Accessibility** — WCAG 2.1 AA compliance.
+5. **Performance** — Lighthouse 100/100/100/100 target.
 
-1. The graph auto-updates on file changes (via hooks).
-2. Use `detect_changes` for code review.
-3. Use `get_affected_flows` to understand impact.
-4. Use `query_graph` pattern="tests_for" to check coverage.
->>>>>>> 4ab16c15 (feat: complete blog system — MDX articles, search, tags, SEO, RSS, tests)
+## Code Style
+
+- TypeScript strict mode
+- Functional components with hooks
+- Tailwind CSS for styling
+- Framer Motion for animations
+- No inline styles (except OG images)

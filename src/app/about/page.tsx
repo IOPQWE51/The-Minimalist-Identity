@@ -1,6 +1,5 @@
 "use client";
 
-import type { Metadata } from "next";
 import { motion } from "framer-motion";
 import {
   MapPin,
@@ -25,17 +24,6 @@ import {
   fadeInUp,
   springTransition,
 } from "@/lib/motion";
-
-export const metadata: Metadata = {
-  title: "About",
-  description:
-    "Designer, developer, and digital gardener. Exploring the intersection of code, design, and the spaces between.",
-  openGraph: {
-    title: "About — Aura",
-    description:
-      "Designer, developer, and digital gardener. Exploring the intersection of code, design, and the spaces between.",
-  },
-};
 
 const skills = [
   { category: "Languages", items: ["TypeScript", "Python", "Rust", "Go", "SQL"] },

@@ -6,14 +6,11 @@ import { Tag } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { springTransition } from "@/lib/motion";
-import { getAllTags } from "@/lib/posts";
 
 interface TagCloudProps {
-  /** Max number of tags to display. 0 = all */
+  tags: string[];
   limit?: number;
-  /** Optional className for the container */
   className?: string;
-  /** Active tag to highlight */
   activeTag?: string | null;
 }
 
@@ -23,25 +20,26 @@ interface TagInfo {
   size: "xs" | "sm" | "md" | "lg" | "xl";
 }
 
-function computeSizes(
-  tags: { tag: string; count: number }[]
-): TagInfo[] {
+function computeSizes(tags: string[]): TagInfo[] {
   if (tags.length === 0) return [];
 
-  const maxCount = Math.max(...tags.map((t) => t.count));
-  const minCount = Math.min(...tags.map((t) => t.count));
+  const counts: Record<string, number> = {};
+  tags.forEach(t => { counts[t] = (counts[t] || 0) + 1; });
+
+  const uniqueTags = Object.keys(counts);
+  const maxCount = Math.max(...Object.values(counts));
+  const minCount = Math.min(...Object.values(counts));
   const range = maxCount - minCount || 1;
 
-  return tags.map((t) => {
-    const normalized = (t.count - minCount) / range;
+  return uniqueTags.map((tag) => {
+    const normalized = (counts[tag] - minCount) / range;
     let size: TagInfo["size"];
     if (normalized >= 0.8) size = "xl";
     else if (normalized >= 0.6) size = "lg";
     else if (normalized >= 0.4) size = "md";
     else if (normalized >= 0.2) size = "sm";
     else size = "xs";
-
-    return { tag: t.tag, count: t.count, size };
+    return { tag, count: counts[tag], size };
   });
 }
 
@@ -53,17 +51,13 @@ const sizeClasses: Record<TagInfo["size"], string> = {
   xl: "px-5 py-2 text-base font-medium",
 };
 
-export function TagCloud({ limit = 0, className, activeTag }: TagCloudProps) {
-  const allTags = getAllTags();
-
+export function TagCloud({ tags, limit = 0, className, activeTag }: TagCloudProps) {
   const displayTags = useMemo(() => {
-    const sliced = limit > 0 ? allTags.slice(0, limit) : allTags;
+    const sliced = limit > 0 ? tags.slice(0, limit) : tags;
     return computeSizes(sliced);
-  }, [allTags, limit]);
+  }, [tags, limit]);
 
-  if (displayTags.length === 0) {
-    return null;
-  }
+  if (displayTags.length === 0) return null;
 
   return (
     <div className={cn("flex flex-wrap items-center gap-2", className)}>

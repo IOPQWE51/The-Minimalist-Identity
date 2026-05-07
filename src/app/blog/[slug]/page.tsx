@@ -1,7 +1,3 @@
-"use client";
-
-import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 import { getPostBySlug, getAllPosts, getAdjacentPosts } from "@/lib/posts";
 import { Aurora } from "@/components/Aurora";
 import { Navbar } from "@/components/Navbar";
@@ -11,18 +7,15 @@ import { TableOfContents } from "@/components/TableOfContents";
 import { ReadingProgress } from "@/components/ReadingProgress";
 import { BackToTop } from "@/components/BackToTop";
 import { MDXContent } from "@/components/MDXContent";
-import { fadeInUp, staggerContainer, staggerItem } from "@/lib/motion";
-import { motion } from "framer-motion";
 import {
   Calendar,
   Clock,
   ArrowLeft,
   ArrowRight,
-  ArrowRightIcon,
   Tag,
 } from "lucide-react";
 import Link from "next/link";
-import { cn } from "@/lib/utils";
+import { notFound } from "next/navigation";
 
 interface PostPageProps {
   params: Promise<{ slug: string }>;
@@ -41,13 +34,10 @@ export async function generateStaticParams() {
   return posts.map((post) => ({ slug: post.slug }));
 }
 
-export async function generateMetadata({
-  params,
-}: PostPageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: PostPageProps) {
   const { slug } = await params;
   const post = getPostBySlug(slug);
   if (!post) return { title: "Post Not Found" };
-
   return {
     title: post.title,
     description: post.excerpt,
@@ -56,13 +46,6 @@ export async function generateMetadata({
       description: post.excerpt,
       type: "article",
       publishedTime: post.date,
-      authors: [post.author || "Aura"],
-      tags: post.tags,
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: post.title,
-      description: post.excerpt,
     },
   };
 }
@@ -70,174 +53,93 @@ export async function generateMetadata({
 export default async function PostPage({ params }: PostPageProps) {
   const { slug } = await params;
   const post = getPostBySlug(slug);
-
   if (!post) notFound();
 
   const { prev, next } = getAdjacentPosts(slug);
 
-  // Pre-process content to add IDs to headings
-  const processedContent = post.content.replace(
-    /^(#{2,4})\s+(.+)$/gm,
-    (_match, hashes: string, text: string) => {
-      const level = hashes.length;
-      const id = text
-        .trim()
-        .toLowerCase()
-        .replace(/[^\w\s-]/g, "")
-        .replace(/\s+/g, "-");
-      return `${hashes} ${text} {#${id}}`;
-    }
-  );
-
   return (
     <>
-      <ReadingProgress />
       <Aurora />
       <Navbar />
-      <BackToTop />
+      <ReadingProgress />
 
-      <main className="relative z-10 pt-24 pb-24">
-        {/* Back link */}
-        <div className="mx-auto max-w-3xl px-6 mb-8">
-          <Link
-            href="/blog"
-            className="inline-flex items-center gap-1.5 text-sm text-muted transition-colors hover:text-foreground"
-          >
-            <ArrowLeft className="h-3.5 w-3.5" />
-            Back to Blog
-          </Link>
-        </div>
+      <main className="relative z-10 flex flex-col items-center">
+        {/* Hero */}
+        <section className="flex min-h-[60vh] w-full flex-col items-center justify-center px-6 pt-32 pb-16">
+          <div className="flex max-w-3xl flex-col items-center text-center">
+            <div className="mb-6 flex items-center gap-2">
+              <span className="rounded-full bg-glass px-4 py-1.5 text-xs font-medium text-muted">
+                {post.tags[0] || "General"}
+              </span>
+              <span className="text-xs text-muted-light">{post.readTime}</span>
+            </div>
 
-        {/* Article Header */}
-        <motion.header
-          variants={staggerContainer}
-          initial="initial"
-          animate="animate"
-          className="mx-auto max-w-3xl px-6 mb-10"
-        >
-          <motion.div variants={staggerItem}>
-            <Link
-              href="/blog"
-              className="glass-subtle mb-6 inline-flex items-center gap-2 rounded-full px-4 py-2"
-            >
-              <Calendar className="h-3.5 w-3.5 text-purple-400" />
-              <span className="text-xs font-medium text-muted">
+            <h1 className="font-serif text-4xl font-bold leading-tight tracking-tight text-foreground sm:text-5xl md:text-6xl">
+              {post.title}
+            </h1>
+
+            <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted">
+              {post.excerpt}
+            </p>
+
+            <div className="mt-6 flex items-center gap-4 text-sm text-muted-light">
+              <span className="flex items-center gap-1.5">
+                <Calendar className="h-3.5 w-3.5" />
                 {formatDate(post.date)}
               </span>
-              <span className="h-0.5 w-0.5 rounded-full bg-muted-light" />
-              <Clock className="h-3.5 w-3.5 text-blue-400" />
-              <span className="text-xs font-medium text-muted">
+              <span className="flex items-center gap-1.5">
+                <Clock className="h-3.5 w-3.5" />
                 {post.readTime}
               </span>
-            </Link>
-          </motion.div>
-
-          <motion.h1
-            variants={staggerItem}
-            className="font-serif text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl lg:text-5xl"
-          >
-            {post.title}
-          </motion.h1>
-
-          <motion.p
-            variants={staggerItem}
-            className="mt-4 text-lg leading-relaxed text-muted"
-          >
-            {post.excerpt}
-          </motion.p>
-
-          <motion.div variants={staggerItem} className="mt-6 flex flex-wrap gap-2">
-            {post.tags.map((tag) => (
-              <Link
-                key={tag}
-                href={`/blog/tag/${encodeURIComponent(tag)}`}
-                className="flex items-center gap-1.5 rounded-full bg-glass px-3 py-1 text-xs font-medium text-muted transition-colors hover:bg-glass-hover hover:text-foreground"
-              >
-                <Tag className="h-3 w-3" />
-                {tag}
-              </Link>
-            ))}
-          </motion.div>
-
-          {post.author && (
-            <motion.div
-              variants={staggerItem}
-              className="mt-6 flex items-center gap-3"
-            >
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-glass text-xs font-bold text-muted">
-                {post.author.charAt(0)}
-              </div>
-              <span className="text-sm font-medium text-foreground">
-                {post.author}
-              </span>
-            </motion.div>
-          )}
-        </motion.header>
-
-        {/* Divider */}
-        <div className="mx-auto max-w-3xl px-6 mb-10">
-          <div className="h-px bg-gradient-to-r from-transparent via-glass-border to-transparent" />
-        </div>
-
-        {/* Article Content */}
-        <div className="mx-auto max-w-3xl px-6">
-          <motion.article
-            variants={fadeInUp}
-            initial="initial"
-            animate="animate"
-            className="prose-custom"
-          >
-            <MDXContent source={processedContent} />
-          </motion.article>
-        </div>
-
-        {/* Adjacent Posts */}
-        {(prev || next) && (
-          <div className="mx-auto max-w-3xl px-6 mt-16">
-            <div className="h-px bg-gradient-to-r from-transparent via-glass-border to-transparent mb-10" />
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {prev && (
-                <GlassCard
-                  href={`/blog/${prev.slug}`}
-                  disableGlow
-                  className="flex flex-col"
-                >
-                  <div className="flex items-center gap-1.5 text-xs text-muted-light mb-2">
-                    <ArrowLeft className="h-3 w-3" />
-                    Previous
-                  </div>
-                  <h3 className="font-serif text-sm font-semibold text-foreground line-clamp-2">
-                    {prev.title}
-                  </h3>
-                  <span className="mt-2 text-xs text-muted-light">
-                    {formatDate(prev.date)}
-                  </span>
-                </GlassCard>
-              )}
-              {next && (
-                <GlassCard
-                  href={`/blog/${next.slug}`}
-                  disableGlow
-                  className="flex flex-col items-end text-right sm:col-start-2"
-                >
-                  <div className="flex items-center gap-1.5 text-xs text-muted-light mb-2">
-                    Next
-                    <ArrowRight className="h-3 w-3" />
-                  </div>
-                  <h3 className="font-serif text-sm font-semibold text-foreground line-clamp-2">
-                    {next.title}
-                  </h3>
-                  <span className="mt-2 text-xs text-muted-light">
-                    {formatDate(next.date)}
-                  </span>
-                </GlassCard>
-              )}
             </div>
           </div>
-        )}
+        </section>
+
+        {/* Content */}
+        <article className="w-full max-w-3xl px-6 pb-24">
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_240px]">
+            <div className="prose-custom">
+              <MDXContent source={post.content} />
+            </div>
+
+            <aside className="hidden lg:block">
+              <div className="sticky top-24">
+                <TableOfContents content={post.content} />
+              </div>
+            </aside>
+          </div>
+        </article>
+
+        {/* Navigation */}
+        <section className="w-full max-w-3xl px-6 pb-24">
+          <div className="flex items-center justify-between gap-4">
+            {prev ? (
+              <Link href={`/blog/${prev.slug}`} className="group flex-1">
+                <GlassCard disableGlow className="flex items-center gap-3">
+                  <ArrowLeft className="h-4 w-4 text-muted-light" />
+                  <div className="flex-1 text-left">
+                    <p className="text-xs text-muted-light">Previous</p>
+                    <p className="text-sm font-medium text-foreground">{prev.title}</p>
+                  </div>
+                </GlassCard>
+              </Link>
+            ) : <div className="flex-1" />}
+            {next ? (
+              <Link href={`/blog/${next.slug}`} className="group flex-1">
+                <GlassCard disableGlow className="flex items-center gap-3 justify-end">
+                  <div className="flex-1 text-right">
+                    <p className="text-xs text-muted-light">Next</p>
+                    <p className="text-sm font-medium text-foreground">{next.title}</p>
+                  </div>
+                  <ArrowRight className="h-4 w-4 text-muted-light" />
+                </GlassCard>
+              </Link>
+            ) : <div className="flex-1" />}
+          </div>
+        </section>
       </main>
 
-      <TableOfContents content={post.content} />
+      <BackToTop />
       <Footer />
     </>
   );

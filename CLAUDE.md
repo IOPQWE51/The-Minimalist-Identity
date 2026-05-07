@@ -1,43 +1,41 @@
-@AGENTS.md
-<<<<<<< HEAD
-=======
+# CLAUDE.md
 
-<!-- code-review-graph MCP tools -->
-## MCP Tools: code-review-graph
+This file provides guidance to Claude Code when working with the codebase.
 
-**IMPORTANT: This project has a knowledge graph. ALWAYS use the
-code-review-graph MCP tools BEFORE using Grep/Glob/Read to explore
-the codebase.** The graph is faster, cheaper (fewer tokens), and gives
-you structural context (callers, dependents, test coverage) that file
-scanning cannot.
+## Project Overview
 
-### When to use graph tools FIRST
+**Project Aura** — A minimalist digital garden and blog system built with Next.js 16, React 19, and Tailwind CSS 4.
 
-- **Exploring code**: `semantic_search_nodes` or `query_graph` instead of Grep
-- **Understanding impact**: `get_impact_radius` instead of manually tracing imports
-- **Code review**: `detect_changes` + `get_review_context` instead of reading entire files
-- **Finding relationships**: `query_graph` with callers_of/callees_of/imports_of/tests_for
-- **Architecture questions**: `get_architecture_overview` + `list_communities`
+## Tech Stack
 
-Fall back to Grep/Glob/Read **only** when the graph doesn't cover what you need.
+- **Framework:** Next.js 16 (App Router)
+- **UI:** React 19, Tailwind CSS 4, Framer Motion
+- **Content:** Markdown with frontmatter (gray-matter)
+- **Search:** Fuzzy search with search history
+- **SEO:** Dynamic sitemap, RSS, OG images
 
-### Key Tools
+## Design System
 
-| Tool | Use when |
-|------|----------|
-| `detect_changes` | Reviewing code changes — gives risk-scored analysis |
-| `get_review_context` | Need source snippets for review — token-efficient |
-| `get_impact_radius` | Understanding blast radius of a change |
-| `get_affected_flows` | Finding which execution paths are impacted |
-| `query_graph` | Tracing callers, callees, imports, tests, dependencies |
-| `semantic_search_nodes` | Finding functions/classes by name or keyword |
-| `get_architecture_overview` | Understanding high-level codebase structure |
-| `refactor_tool` | Planning renames, finding dead code |
+- **Style:** Glassmorphism + Aurora effects + Spring physics
+- **Fonts:** Geist Sans (UI), Playfair Display (headings)
+- **Themes:** Light/Dark mode with system preference
 
-### Workflow
+## Key Files
 
-1. The graph auto-updates on file changes (via hooks).
-2. Use `detect_changes` for code review.
-3. Use `get_affected_flows` to understand impact.
-4. Use `query_graph` pattern="tests_for" to check coverage.
->>>>>>> 4ab16c15 (feat: complete blog system — MDX articles, search, tags, SEO, RSS, tests)
+- `src/app/page.tsx` — Home page
+- `src/app/blog/page.tsx` — Blog listing
+- `src/app/blog/[slug]/page.tsx` — Article detail
+- `src/app/about/page.tsx` — About page
+- `src/app/projects/page.tsx` — Projects page
+- `src/lib/posts.ts` — Post data utilities
+- `src/lib/search.ts` — Search utilities
+- `content/posts/` — Blog articles (Markdown)
+
+## Commands
+
+```bash
+npm run dev      # Start development server
+npm run build    # Production build
+npm run start    # Start production server
+npm run lint     # Run ESLint
+```
