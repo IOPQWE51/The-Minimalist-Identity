@@ -7,13 +7,7 @@ import { TableOfContents } from "@/components/TableOfContents";
 import { ReadingProgress } from "@/components/ReadingProgress";
 import { BackToTop } from "@/components/BackToTop";
 import { MDXContent } from "@/components/MDXContent";
-import {
-  Calendar,
-  Clock,
-  ArrowLeft,
-  ArrowRight,
-  Tag,
-} from "lucide-react";
+import { Calendar, Clock, ArrowLeft, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -41,12 +35,6 @@ export async function generateMetadata({ params }: PostPageProps) {
   return {
     title: post.title,
     description: post.excerpt,
-    openGraph: {
-      title: post.title,
-      description: post.excerpt,
-      type: "article",
-      publishedTime: post.date,
-    },
   };
 }
 
@@ -63,44 +51,42 @@ export default async function PostPage({ params }: PostPageProps) {
       <Navbar />
       <ReadingProgress />
 
-      <main className="relative z-10 flex flex-col items-center">
-        {/* Hero */}
-        <section className="flex min-h-[60vh] w-full flex-col items-center justify-center px-6 pt-32 pb-16">
-          <div className="flex max-w-3xl flex-col items-center text-center">
-            <div className="mb-6 flex items-center gap-2">
-              <span className="rounded-full bg-glass px-4 py-1.5 text-xs font-medium text-muted">
+      <main className="relative z-10 px-6 pt-28 pb-20">
+        <div className="mx-auto max-w-3xl">
+          {/* Header */}
+          <header className="mb-10 text-center">
+            <div className="mb-4 flex items-center justify-center gap-2">
+              <span className="rounded-full bg-glass px-3 py-1 text-[11px] font-medium text-muted">
                 {post.tags[0] || "General"}
               </span>
-              <span className="text-xs text-muted-light">{post.readTime}</span>
+              <span className="text-[11px] text-muted-light">{post.readTime}</span>
             </div>
 
-            <h1 className="font-serif text-4xl font-bold leading-tight tracking-tight text-foreground sm:text-5xl md:text-6xl">
+            <h1 className="font-serif text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl md:text-[2.75rem]">
               {post.title}
             </h1>
 
-            <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted">
+            <p className="mt-4 text-base leading-relaxed text-muted">
               {post.excerpt}
             </p>
 
-            <div className="mt-6 flex items-center gap-4 text-sm text-muted-light">
-              <span className="flex items-center gap-1.5">
-                <Calendar className="h-3.5 w-3.5" />
+            <div className="mt-4 flex items-center justify-center gap-3 text-xs text-muted-light">
+              <span className="flex items-center gap-1">
+                <Calendar className="h-3 w-3" />
                 {formatDate(post.date)}
               </span>
-              <span className="flex items-center gap-1.5">
-                <Clock className="h-3.5 w-3.5" />
+              <span className="flex items-center gap-1">
+                <Clock className="h-3 w-3" />
                 {post.readTime}
               </span>
             </div>
-          </div>
-        </section>
+          </header>
 
-        {/* Content */}
-        <article className="w-full max-w-3xl px-6 pb-24">
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_240px]">
-            <div className="prose-custom">
+          {/* Content + TOC */}
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_220px]">
+            <article>
               <MDXContent source={post.content} />
-            </div>
+            </article>
 
             <aside className="hidden lg:block">
               <div className="sticky top-24">
@@ -108,35 +94,37 @@ export default async function PostPage({ params }: PostPageProps) {
               </div>
             </aside>
           </div>
-        </article>
 
-        {/* Navigation */}
-        <section className="w-full max-w-3xl px-6 pb-24">
-          <div className="flex items-center justify-between gap-4">
+          {/* Navigation */}
+          <nav className="mt-16 flex items-center justify-between gap-4">
             {prev ? (
               <Link href={`/blog/${prev.slug}`} className="group flex-1">
-                <GlassCard disableGlow className="flex items-center gap-3">
-                  <ArrowLeft className="h-4 w-4 text-muted-light" />
-                  <div className="flex-1 text-left">
-                    <p className="text-xs text-muted-light">Previous</p>
-                    <p className="text-sm font-medium text-foreground">{prev.title}</p>
+                <GlassCard disableGlow className="flex items-center gap-2 p-3">
+                  <ArrowLeft className="h-3.5 w-3.5 shrink-0 text-muted-light" />
+                  <div className="min-w-0 text-left">
+                    <p className="text-[10px] text-muted-light">Previous</p>
+                    <p className="truncate text-xs font-medium text-foreground">
+                      {prev.title}
+                    </p>
                   </div>
                 </GlassCard>
               </Link>
             ) : <div className="flex-1" />}
             {next ? (
               <Link href={`/blog/${next.slug}`} className="group flex-1">
-                <GlassCard disableGlow className="flex items-center gap-3 justify-end">
-                  <div className="flex-1 text-right">
-                    <p className="text-xs text-muted-light">Next</p>
-                    <p className="text-sm font-medium text-foreground">{next.title}</p>
+                <GlassCard disableGlow className="flex items-center justify-end gap-2 p-3">
+                  <div className="min-w-0 text-right">
+                    <p className="text-[10px] text-muted-light">Next</p>
+                    <p className="truncate text-xs font-medium text-foreground">
+                      {next.title}
+                    </p>
                   </div>
-                  <ArrowRight className="h-4 w-4 text-muted-light" />
+                  <ArrowRight className="h-3.5 w-3.5 shrink-0 text-muted-light" />
                 </GlassCard>
               </Link>
             ) : <div className="flex-1" />}
-          </div>
-        </section>
+          </nav>
+        </div>
       </main>
 
       <BackToTop />
